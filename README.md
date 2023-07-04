@@ -1,26 +1,39 @@
-# Staking project
+# Upgradable Smart Contracts
 
-This project demonstrates a basic Staking contract with interest accrual and deposit/withdraw functionality. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
+This project demonstrates the proxy pattern. It has the architecture shown below.
 
-- You will be able to deposit and withdraw from the Staker Contract.
-  - Staking is a single-use action, meaning once we stake we cannot re-stake again
-  - Withdraws from the contract removes the entire principal balance and any accrued interest
-- The Staker contract has an interest payout rate of `uint256 public constant rewardRatePerSecond = 0.0001 ether` for every second that the deposited ETH is eligible for interest accrument
-- Upon contract deployment, the Staker contract should begin with 2 timestamp counters. The first deadline should be set to 180 seconds and the second set to 600 seconds
-  ```
-  uint256 public withdrawalDeadline = currentBlockTime + 180 seconds;
-  uint256 public claimDeadline = currentBlockTime + 600 seconds;
-  ```
-- The 180 seconds deadline dictates the period in which the staking user is able to deposit funds. (Between t=0 seconds and t=180 seconds, the staking user can deposit)
-- All blocks that take place between the deposit of funds to the 180 seconds deadline are valid for interest accrual
-- After the 180 seconds withdrawal deadline has passed, the staking user is able to withdraw the entire principal balance and any accrued interest until the 600 seconds deadline hits
-- After the additional 180 seconds window for withdraws has passed, the user is blocked from withdrawing their funds since they timed out.
+<br/>
 
+![proxy chart](images/proxy.png "Title")
+
+<br/>
+By using deployProxy() in OpenZeppelin upgrade plugins, this deployed contract instance can be upgraded later. By default, only the address that initially deployed the contract has the right to upgrade it.
+
+<br/>
+
+> **_NOTE:_** The default pattern is “transparent” but you can specify that you want your proxy to follow the UUPS pattern by explicitly setting that configuration option
+(Doc: https://docs.openzeppelin.com/upgrades-plugins/1.x/api-hardhat-upgrades#common-options).
+
+<br/>
 Try running some of the following tasks:
+<br/>
+<br/>
 
 ```shell
-npx hardhat test
-npx hardhat run scripts/deploy.js
+yarn hardhat run --network sepolia scripts/deploy_upgradeable_pricefeedtracker.js
+yarn hardhat console --network sepolia
+> const PriceFeedTracker = await ethers.getContractFactory("PriceFeedTracker");
+> const priceFeedTracker = await PriceFeedTracker.attach('<<<< YOUR CONTRACT ADDRESS >>>>')
+> (await priceFeedTracker.getAdmin())
+> (await v1.retrievePrice())
+
+// then upgrade the implementation contract
+yarn hardhat run --network sepolia scripts/upgrade_pricefeedtracker.js
+> const V2 = await ethers.getContractFactory("PriceFeedTrackerV2")
+> const v2 = await V2.attach("<<<< YOUR CONTRACT ADDRESS >>>>")
+> const tx = await v2.retrievePrice('0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e') // price feed address
+> (await v2.price())
+
 ```
 
 ## Deployed contract on Sepolia
