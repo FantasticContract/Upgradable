@@ -37,5 +37,5 @@ yarn hardhat run --network sepolia scripts/upgrade_pricefeedtracker.js
 
 ```
 
-## Deployed contract on Sepolia
-https://sepolia.etherscan.io/address/0x5e330103da8023bad1bfb65bf5b2f11ff4312872#code
+## Deployed proxy contract on Sepolia
+https://sepolia.etherscan.io/address/0x4A0cE8BcBB727e04f08D824A006cc67D9A52d405#code
