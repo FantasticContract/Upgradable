@@ -10,6 +10,7 @@ This project demonstrates the proxy pattern. It has the architecture shown below
 By using deployProxy() in OpenZeppelin upgrade plugins, this deployed contract instance can be upgraded later. By default, only the address that initially deployed the contract has the right to upgrade it.
 
 <br/>
+<br/>
 
 > **_NOTE:_** The default pattern is “transparent” but you can specify that you want your proxy to follow the UUPS pattern by explicitly setting that configuration option
 (Doc: https://docs.openzeppelin.com/upgrades-plugins/1.x/api-hardhat-upgrades#common-options).
